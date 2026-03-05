@@ -1,0 +1,21 @@
+15:47:59 **** Incremental Build of configuration Debug for project displayy ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/ambedkar.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/ambedkar.d" -MT"Core/Src/ambedkar.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/ambedkar.o"
+../Core/Src/ambedkar.c:20:30: error: unknown type name 'LV_ATTRIBUTE_LARGE_CONST'
+   20 | const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMAGE_1000227743 uint8_t 1000227743_map[] = {
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/ambedkar.c:20:93: error: invalid suffix "_map" on integer constant
+   20 | const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMAGE_1000227743 uint8_t 1000227743_map[] = {
+      |                                                                                             ^~~~~~~~~~~~~~
+../Core/Src/ambedkar.c:20:93: error: expected '=', ',', ';', 'asm' or '__attribute__' before numeric constant
+../Core/Src/ambedkar.c:119:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before numeric constant
+  119 | const lv_image_dsc_t 1000227743 = {
+      |                      ^~~~~~~~~~
+../Core/Src/ambedkar.c:125:11: error: invalid suffix "_map" on integer constant
+  125 |   .data = 1000227743_map,
+      |           ^~~~~~~~~~~~~~
+make: *** [Core/Src/subdir.mk:46: Core/Src/ambedkar.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+15:48:00 Build Failed. 6 errors, 0 warnings. (took 1s.370ms)
+

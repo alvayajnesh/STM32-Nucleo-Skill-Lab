@@ -1,0 +1,10 @@
+11:27:12 **** Incremental Build of configuration Debug for project SKILL_911 ****
+make -j12 all 
+arm-none-eabi-size  SKILL_911.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5988	     12	   1572	   7572	   1d94	SKILL_911.elf
+Finished building: default.size.stdout
+ 
+
+11:27:13 Build Finished. 0 errors, 0 warnings. (took 914ms)
+

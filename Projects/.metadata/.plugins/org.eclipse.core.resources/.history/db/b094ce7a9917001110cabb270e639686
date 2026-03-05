@@ -1,0 +1,69 @@
+#include "main.h"
+#include "tim.h"
+#include "usart.h"
+#include "gpio.h"
+#include "stdio.h"
+
+/* Capture variables */
+uint32_t IC_Val1 = 0;
+uint32_t IC_Val2 = 0;
+uint32_t Difference = 0;
+uint8_t Is_First_Captured = 0;
+
+float Frequency = 0;
+float Period = 0;
+
+/* Redirect printf to UART */
+int _write(int file, char *ptr, int len)
+{
+  HAL_UART_Transmit(&huart2,(uint8_t*)ptr,len,HAL_MAX_DELAY);
+  return len;
+}
+
+int main(void)
+{
+  HAL_Init();
+  SystemClock_Config();
+
+  MX_GPIO_Init();
+  MX_USART2_UART_Init();
+  MX_TIM2_Init();
+
+  /* Start Input Capture Interrupt */
+  HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+
+  printf("Input Capture Started\r\n");
+
+  while (1)
+  {
+      printf("Period = %.2f us  Frequency = %.2f Hz\r\n", Period, Frequency);
+      HAL_Delay(1000);
+  }
+}
+
+/* Input Capture Callback */
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+  if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+  {
+      if(Is_First_Captured==0)
+      {
+          IC_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+          Is_First_Captured = 1;
+      }
+      else
+      {
+          IC_Val2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+
+          if(IC_Val2 > IC_Val1)
+              Difference = IC_Val2 - IC_Val1;
+          else
+              Difference = (0xFFFFFFFF - IC_Val1) + IC_Val2;
+
+          Period = Difference;              // microseconds
+          Frequency = 1000000.0 / Difference;
+
+          Is_First_Captured = 0;
+      }
+  }
+}

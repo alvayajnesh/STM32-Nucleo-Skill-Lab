@@ -1,0 +1,43 @@
+11:13:33 **** Incremental Build of configuration Debug for project dht_sensor ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
+../Core/Src/main.c:67:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+   67 | {
+      | ^
+../Core/Src/main.c:112:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+  112 | {
+      | ^
+../Core/Src/main.c:159:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+  159 | {
+      | ^
+../Core/Src/main.c:192:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+  192 | {
+      | ^
+../Core/Src/main.c:238:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+  238 | {
+      | ^
+../Core/Src/main.c:59:6: warning: type of 'UIINT16' defaults to 'int' [-Wimplicit-int]
+   59 | void HAL_GPIO_EXTI_Callback (UIINT16)
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:59:6: error: argument 'UIINT16' doesn't match prototype
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:279,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:239:6: error: prototype declaration
+  239 | void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:264: error: expected '{' at end of input
+../Core/Src/main.c: At top level:
+../Core/Src/main.c:51:13: warning: 'MX_GPIO_Init' declared 'static' but never defined [-Wunused-function]
+   51 | static void MX_GPIO_Init(void);
+      |             ^~~~~~~~~~~~
+../Core/Src/main.c:52:13: warning: 'MX_USART2_UART_Init' declared 'static' but never defined [-Wunused-function]
+   52 | static void MX_USART2_UART_Init(void);
+      |             ^~~~~~~~~~~~~~~~~~~
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+11:13:35 Build Failed. 9 errors, 3 warnings. (took 2s.336ms)
+

@@ -1,0 +1,10 @@
+12:44:33 **** Incremental Build of configuration Debug for project skill33 ****
+make -j12 all 
+arm-none-eabi-size  skill33.elf 
+   text	   data	    bss	    dec	    hex	filename
+  14352	    104	   1976	  16432	   4030	skill33.elf
+Finished building: default.size.stdout
+ 
+
+12:44:34 Build Finished. 0 errors, 0 warnings. (took 1s.54ms)
+

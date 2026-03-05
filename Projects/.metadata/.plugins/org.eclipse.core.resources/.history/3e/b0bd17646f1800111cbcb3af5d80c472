@@ -1,0 +1,193 @@
+#include "main.h"
+
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* USER CODE BEGIN PD */
+#define TFT_RST_HIGH() HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET)
+#define TFT_RST_LOW()  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET)
+
+#define TFT_CS_HIGH() HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET)
+#define TFT_CS_LOW()  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET)
+
+#define TFT_DC_HIGH() HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET)
+#define TFT_DC_LOW()  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET)
+/* USER CODE END PD */
+
+/* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi1;
+
+/* USER CODE BEGIN 0 */
+
+/* -------- SIMPLE FONT FOR JAI BHEEM ---------- */
+
+const uint8_t font5x7[][5] = {
+{0x7E,0x11,0x11,0x11,0x7E}, // A
+{0x7F,0x49,0x49,0x49,0x36}, // B
+{0x3E,0x41,0x41,0x41,0x22}, // C
+{0x7F,0x41,0x41,0x22,0x1C}, // D
+{0x7F,0x49,0x49,0x49,0x41}, // E
+{0x7F,0x09,0x09,0x09,0x01}, // F
+{0x3E,0x41,0x49,0x49,0x7A}, // G
+{0x7F,0x08,0x08,0x08,0x7F}, // H
+{0x00,0x41,0x7F,0x41,0x00}, // I
+{0x20,0x40,0x41,0x3F,0x01}, // J
+};
+
+/* -------- TFT LOW LEVEL FUNCTIONS ---------- */
+
+void TFT_WriteCommand(uint8_t cmd)
+{
+    TFT_DC_LOW();
+    TFT_CS_LOW();
+    HAL_SPI_Transmit(&hspi1,&cmd,1,HAL_MAX_DELAY);
+    TFT_CS_HIGH();
+}
+
+void TFT_WriteData(uint8_t data)
+{
+    TFT_DC_HIGH();
+    TFT_CS_LOW();
+    HAL_SPI_Transmit(&hspi1,&data,1,HAL_MAX_DELAY);
+    TFT_CS_HIGH();
+}
+
+void TFT_Reset()
+{
+    TFT_RST_LOW();
+    HAL_Delay(50);
+    TFT_RST_HIGH();
+    HAL_Delay(50);
+}
+
+void TFT_Init()
+{
+    TFT_Reset();
+
+    TFT_WriteCommand(0x11);
+    HAL_Delay(120);
+
+    TFT_WriteCommand(0x3A);
+    TFT_WriteData(0x05);
+
+    TFT_WriteCommand(0x29);
+}
+
+/* -------- SCREEN FUNCTIONS ---------- */
+
+void TFT_FillScreen(uint16_t color)
+{
+    uint8_t data[2];
+
+    TFT_WriteCommand(0x2A);
+    TFT_WriteData(0);
+    TFT_WriteData(0);
+    TFT_WriteData(0);
+    TFT_WriteData(127);
+
+    TFT_WriteCommand(0x2B);
+    TFT_WriteData(0);
+    TFT_WriteData(0);
+    TFT_WriteData(0);
+    TFT_WriteData(159);
+
+    TFT_WriteCommand(0x2C);
+
+    data[0] = color >> 8;
+    data[1] = color & 0xFF;
+
+    TFT_DC_HIGH();
+    TFT_CS_LOW();
+
+    for(int i=0;i<128*160;i++)
+        HAL_SPI_Transmit(&hspi1,data,2,HAL_MAX_DELAY);
+
+    TFT_CS_HIGH();
+}
+
+void TFT_DrawPixel(uint16_t x,uint16_t y,uint16_t color)
+{
+    uint8_t data[2];
+
+    TFT_WriteCommand(0x2A);
+    TFT_WriteData(0);
+    TFT_WriteData(x);
+    TFT_WriteData(0);
+    TFT_WriteData(x);
+
+    TFT_WriteCommand(0x2B);
+    TFT_WriteData(0);
+    TFT_WriteData(y);
+    TFT_WriteData(0);
+    TFT_WriteData(y);
+
+    TFT_WriteCommand(0x2C);
+
+    data[0]=color>>8;
+    data[1]=color&0xFF;
+
+    TFT_DC_HIGH();
+    TFT_CS_LOW();
+    HAL_SPI_Transmit(&hspi1,data,2,HAL_MAX_DELAY);
+    TFT_CS_HIGH();
+}
+
+void TFT_DrawChar(uint16_t x,uint16_t y,char c,uint16_t color)
+{
+    if(c<'A'||c>'J') return;
+
+    uint8_t *chr=(uint8_t*)font5x7[c-'A'];
+
+    for(int i=0;i<5;i++)
+    {
+        uint8_t line=chr[i];
+
+        for(int j=0;j<8;j++)
+        {
+            if(line & 1)
+                TFT_DrawPixel(x+i,y+j,color);
+
+            line >>=1;
+        }
+    }
+}
+
+void TFT_DrawString(uint16_t x,uint16_t y,char *str,uint16_t color)
+{
+    while(*str)
+    {
+        TFT_DrawChar(x,y,*str,color);
+        x+=6;
+        str++;
+    }
+}
+
+/* USER CODE END 0 */
+
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_SPI1_Init(void);
+
+/* -------------------- MAIN -------------------- */
+
+int main(void)
+{
+  HAL_Init();
+  SystemClock_Config();
+
+  MX_GPIO_Init();
+  MX_SPI1_Init();
+
+  TFT_Init();
+
+  TFT_FillScreen(0x0000);
+
+  TFT_DrawString(20,40,"JAI",0xFFFF);
+  TFT_DrawString(20,60,"BHEEM",0xFFFF);
+
+  while (1)
+  {
+
+  }
+}

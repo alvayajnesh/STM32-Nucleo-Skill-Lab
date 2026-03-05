@@ -1,0 +1,10 @@
+12:09:56 **** Incremental Build of configuration Debug for project potentiometer ****
+make -j12 all 
+arm-none-eabi-size  potentiometer.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8308	     12	   1652	   9972	   26f4	potentiometer.elf
+Finished building: default.size.stdout
+ 
+
+12:09:57 Build Finished. 0 errors, 0 warnings. (took 856ms)
+
